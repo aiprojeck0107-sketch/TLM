@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " PD",
+    " SP",
+    "S  "
+  ],
+  "key": {
+    "S": {
+      "tag": "c:wooden_rods"
+    },
+    "D": {
+      "tag": "c:diamonds"
+    },
+    "P": {
+      "item": "minecraft:paper"
+    }
+  },
+  "result": {
+    "item": "touhou_little_maid:sanae_gohei"
+  }
+}

@@ -1,0 +1,378 @@
+plugins {
+    id 'fabric-loom' version '1.10-SNAPSHOT'
+    id 'maven-publish'
+    id 'com.gradleup.shadow' version '8.3.6'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = "${archives_base_name}"
+}
+
+fabricApi {
+    configureDataGeneration {
+        client = true
+    }
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/touhou_little_maid.accesswidener")
+    mixin {
+        defaultRefmapName = "touhou_little_maid.refmap.json"
+    }
+    runs {
+        datagen {
+            property "fabric-api.datagen.modid", "touhou_little_maid"
+        }
+    }
+}
+
+repositories {
+    // ./libs 目录为库
+    flatDir {
+        dir "libs"
+    }
+    // mavenLocal 为本机仓库
+    mavenLocal()
+    mavenCentral()
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org'
+    }
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+    }
+    maven {
+        url "https://maven.shedaniel.me/"
+        content {
+            includeGroup "me.shedaniel"
+            includeGroup "me.shedaniel.cloth"
+            includeGroup "dev.architectury"
+        }
+    }
+    maven {
+        url "https://maven2.bai.lol"
+        content {
+            includeGroup "mcp.mobius.waila"
+            includeGroup "lol.bai"
+        }
+    }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+        content {
+            includeGroup "dev.emi"
+        }
+    }
+    maven {
+        name 'cursemaven'
+        url = "https://www.cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
+    maven { // for TOP
+        url "https://maven.k-4u.nl/"
+        content {
+            includeGroup "mcjty.theoneprobe"
+        }
+    }
+    maven {
+        url = "https://maven.theillusivec4.top/"
+        content {
+            includeGroup "top.theillusivec4.curios"
+        }
+    }
+    maven {// CCA
+        name = "Ladysnake Mods"
+        url = 'https://maven.ladysnake.org/releases'
+    }
+    maven {// Forge Config API Port
+        name = "Fuzs Mod Resources"
+        url = "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/"
+    }
+    maven {// ModMenu
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        name = "CottonMC"
+        url = "https://alexiil.uk/mirrors/server.bbkr.space/maven/"
+    }
+    maven {
+        url = "https://maven.modmuss50.me/"
+    }
+    maven {
+        url "https://maven.jamieswhiteshirt.com/libs-release"
+        content {
+            includeGroup "com.jamieswhiteshirt"
+        }
+    }
+    maven {
+        url "https://maven.latvian.dev/releases"
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+    maven { url 'https://maven.wispforest.io/releases' }
+    maven { url 'https://maven.su5ed.dev/releases' }
+    maven {
+        url 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
+        }
+    }
+    maven {
+        name "reposiliteRepositoryArtifacts"
+        url "https://maven.conczin.net/Artifacts"
+    }
+    maven { url = "https://maven.createmod.net" }
+    maven { url = "https://mvn.devos.one/releases/" }
+    maven {
+        url "https://maven.nova-committee.cn/releases"
+    }
+    maven {
+        name = 'GeckoLib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroupByRegex("software\\.bernie.*")
+            includeGroup("com.eliotlash.mclib")
+        }
+    }
+    maven {
+        name = "Greenhouse Maven"
+        url = 'https://maven.greenhouse.lgbt/releases/'
+    }
+    maven {
+        name = "AlexIIL"
+        url = "https://staging.alexiil.uk/maven/"
+    }
+}
+
+configurations {
+    runtimeClasspath.extendsFrom localRuntime
+
+    mcLib
+    implementation {
+        extendsFrom mcLib
+    }
+    additionalRuntimeClasspath {
+        extendsFrom mcLib
+    }
+}
+
+dependencies {
+    // --- CORE MINECRAFT & FABRIC ---
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${project.parchment_minecraft_version}:${project.parchment_mappings_version}@zip")
+    }
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+    // --- CORE TOUHOU LITTLE MAID DEPENDENCIES ---
+    // 触及距离/攻击范围 (Jarak serang Maid)
+    modImplementation(include("com.jamieswhiteshirt:reach-entity-attributes:2.4.0"))
+
+    // JS Engine (Untuk script AI Maid)
+    implementation(include("org.openjdk.nashorn:nashorn-core:15.4"))
+
+    modCompileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    annotationProcessor 'com.google.code.findbugs:jsr305:3.0.2'
+
+    // Opus & MP3 音频解码库 (Decoder audio/suara Maid)
+    mcLib("org.gagravarr:vorbis-java-core:0.8")
+    mcLib("io.github.jaredmdobson:concentus:1.0.2")
+    mcLib "com.googlecode.soundlibs:mp3spi:1.9.5.4"
+
+    // YAML 库 (Config)
+    mcLib("org.yaml:snakeyaml:2.4")
+
+    // Cardinal Components (Penyimpan data entity & item)
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-base:5.2.3"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:5.2.3"
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-item:5.2.3"
+
+    // 纯为了一个IPlant判定 (Core tanaman untuk pertanian Maid)
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:common:2.3.8+1.20.1"))
+    modImplementation(include("io.github.fabricators_of_create.Porting-Lib:base:2.3.8+1.20.1"))
+
+    // 不加就无法run的各种前置 (Core GUI & Config - Wajib ada agar game tidak crash)
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.2"
+    modImplementation "io.github.cottonmc:LibGui:8.0.2+1.20"
+    modImplementation "me.zeroeightsix:fiber:0.23.0-SNAPSHOT"
+
+   // --- QOL & ESSENTIAL INTEGRATIONS ---
+    // Recipe Viewers (JEI/REI/EMI)
+    modImplementation "maven.modrinth:jei:${jei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${rei_version}"
+    modImplementation("me.shedaniel.cloth:cloth-config-fabric:${cloth_config_version}") {
+        exclude group: 'net.fabricmc.fabric-api'
+    }
+    modCompileOnly "maven.modrinth:emi:${emi_version}"
+
+    // Patchouli (Buku panduan Maid) & Jade (Tooltip info)
+    modImplementation "maven.modrinth:jade:${jade_version}"
+    modImplementation "maven.modrinth:patchouli:${patchouli_version}"
+
+    // ModMenu (Menu konfigurasi mod di dalam game)
+    modImplementation("com.terraformersmc:modmenu:7.2.2")
+
+    // Accessories & Hats (Aksesoris & kosmetik Maid)
+    modImplementation("maven.modrinth:simple-hats:SDPZOmWZ")
+    modImplementation("maven.modrinth:accessories-tc-layer:3.8.1+beta.14")
+    modRuntimeOnly("maven.modrinth:potion-ring-reforged:SXRMS0Le")
+    modImplementation("io.wispforest:accessories-fabric:${project.accessories_version}")
+
+    // Pat Pat (Fitur mengelus kepala Maid)
+    modImplementation "maven.modrinth:patpat:1.2.1+1.20.1"
+    modImplementation "maven.modrinth:proxlib:0.2.4+1.20.1"
+    modImplementation "maven.modrinth:fabric-permissions-api:0.3.1"
+
+    // Ponder (Animasi panduan/tutorial visual)
+    modImplementation("net.createmod.ponder:Ponder-Fabric-${minecraft_version}:1.0.83")
+
+    // Performance Mods Compatibility
+    modCompileOnly "maven.modrinth:sodium:mc1.20.1-0.5.13-fabric"
+    modCompileOnly "maven.modrinth:iris:1.7.6+1.20.1-fabric"
+
+
+    // =========================================================================
+    // --- MOD KOMPATIBILITAS RINGAN YANG DIAKTIFKAN KEMBALI ---
+    // =========================================================================
+    modImplementation "maven.modrinth:cyberanner-ironchest:${iron_chests_version}"
+    modImplementation "maven.modrinth:carry-on:${carry_on_version}"
+    modImplementation "net.fabricmc:fabric-language-kotlin:1.13.4+kotlin.2.2.0"
+    modImplementation "maven.modrinth:libipn:fabric-1.20-4.0.2"
+    modImplementation "maven.modrinth:inventory-profiles-next:fabric-1.20.1-1.10.15"
+    modImplementation "net.conczin:immersive_melodies:0.6.0+1.20.1+fabric"
+    modCompileOnly("maven.modrinth:sophisticated-backpacks-(unoffical-fabric-port):53tSpjtW")
+    modCompileOnly("maven.modrinth:sophisticated-core-(unofficial-fabric-port):T8bJQfWs")
+    modImplementation "maven.modrinth:kaleidoscope-cookery-refabricated:1.2.0-fabric+mc1.20.1"
+    modImplementation "maven.modrinth:improved-mobs:1.20.1-1.13.6-fabric"
+    modImplementation "maven.modrinth:tenshilib:1.20.1-1.7.6-fabric"
+    modRuntimeOnly("maven.modrinth:xaeros-minimap:25.2.10_Fabric_1.20")
+    modRuntimeOnly("maven.modrinth:xaeros-world-map:1.39.12_Fabric_1.20")
+    modImplementation("vectorwing:FarmersDelight:1.20.1-2.4.1+refabricated") { exclude(group: "net.fabricmc") }
+    modImplementation("maven.modrinth:common-network:1.0.5-1.20.1-fabric")
+    modImplementation("maven.modrinth:just-more-cakes:1.18.1-fabric,1.20.1")
+    modImplementation("maven.modrinth:travelersbackpack:E4UZZZAV")
+
+
+    // =========================================================================
+    // --- YANG TETAP DINONAKTIFKAN (HANYA KUBEJS & SENJATA BERAT) ---
+    // =========================================================================
+    
+    // 拔刀剑 (SlashBlade - Mod Pedang Berat)
+    // modImplementation "libs:SlashBlade-Refabricated-1.20.1:0.0.6"
+    // modImplementation "io.github.fabricators_of_create.Porting-Lib:obj_loader:2.3.8+1.20.1"
+    
+    // TACZ & Lua Engine (Mod Senjata Api Sangat Berat di RAM)
+    // modImplementation "libs:TACZ-Refabricated-1.20.1:0.5.1-forge1.1.7-hotfix2"
+    // modImplementation "maven.modrinth:modernkeybinding:OFIAZVy7"
+    // implementation(minecraftLibraries('org.apache.commons:commons-math3:3.6.1'))
+    // implementation('com.github.FiguraMC.luaj:luaj-core:3.0.8-figura') { exclude group: 'org.apache.commons', module: 'commons-lang3' }
+    // implementation('com.github.FiguraMC.luaj:luaj-jse:3.0.8-figura') { exclude group: 'org.apache.commons', module: 'commons-lang3' }
+    // implementation('org.apache.bcel:bcel:6.6.1') { exclude group: 'org.apache.commons', module: 'commons-lang3' }
+
+    // 卓越前线 (Superb Warfare - Mod Senjata Berat & GeckoLib)
+    // modCompileOnly("libs:superbwarfare-fabric:0.0.1-forge0.8.7")
+    // modCompileOnly 'software.bernie.geckolib:geckolib-fabric-1.20.1:4.4.6'
+
+    // KubeJS & Rhino (Engine Scripting Eksternal Berat)
+    // modImplementation("dev.latvian.mods:kubejs-fabric:2001.6.5-build.16")
+    // modImplementation("dev.latvian.mods:rhino-fabric:2001.2.3-build.10")
+}
+
+shadowJar {
+    configurations = [project.configurations.mcLib]
+
+    dependencies {
+        exclude(dependency('junit:junit'))
+    }
+
+    archiveClassifier.set("shadow")
+
+    relocationPrefix = "com.github.tartaricacid.touhoulittlemaid.libs"
+    enableRelocation = true
+
+    exclude 'META-INF/maven/**/*'
+    exclude 'META-INF/versions/**/*'
+    exclude 'META-INF/LICENSE'
+    exclude '.cache/**'
+
+    mergeServiceFiles()
+    minimize()
+}
+
+remapJar {
+    dependsOn(shadowJar)
+    inputFile = shadowJar.archiveFile
+}
+
+processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    filteringCharset "UTF-8"
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+                "minecraft_version": project.minecraft_version,
+                "loader_version": project.loader_version
+    }
+}
+
+def targetJavaVersion = 17
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        it.options.release.set(targetJavaVersion)
+    }
+}
+
+tasks.withType(Jar).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+tasks.withType(Zip).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+tasks.withType(Copy).configureEach {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
+}
+
+// configure the maven publication
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            artifactId = "${project.archives_base_name}"
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "file:///D:/github_maven/Sh1roCu_MCRepo/repository"
+        }
+    }
+}

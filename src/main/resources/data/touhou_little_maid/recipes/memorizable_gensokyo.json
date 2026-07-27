@@ -1,0 +1,29 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "patchouli"
+      ]
+    }
+  ],
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:white_dyes"
+    },
+    {
+      "tag": "c:red_dyes"
+    },
+    {
+      "item": "minecraft:book"
+    }
+  ],
+  "result": {
+    "type": "minecraft:item_nbt",
+    "item": "patchouli:guide_book",
+    "nbt": {
+      "patchouli:book": "touhou_little_maid:memorizable_gensokyo"
+    }
+  }
+}

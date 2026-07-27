@@ -1,0 +1,45 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Tanks:{amount:729000L,variant:{fluid:\"minecraft:lava\"}}}"
+            }
+          ],
+          "name": "touhou_little_maid:tank_backpack"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Tanks:{amount:324000L,variant:{fluid:\"minecraft:lava\"}}}"
+            }
+          ],
+          "name": "touhou_little_maid:tank_backpack"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:set_nbt",
+              "tag": "{Tanks:{amount:243000L,variant:{fluid:\"minecraft:lava\"}}}"
+            }
+          ],
+          "name": "touhou_little_maid:tank_backpack"
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 12
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

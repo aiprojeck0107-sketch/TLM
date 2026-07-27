@@ -1,0 +1,20 @@
+{
+  "fabric:load_conditions": [
+    {
+      "condition": "fabric:all_mods_loaded",
+      "values": [
+        "patchouli"
+      ]
+    }
+  ],
+  "criteria": {
+    "tick": {
+      "trigger": "touhou_little_maid:give_patchouli_book_config"
+    }
+  },
+  "rewards": {
+    "loot": [
+      "touhou_little_maid:grant_book_on_first_join"
+    ]
+  }
+}
