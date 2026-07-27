@@ -3,7 +3,6 @@ package com.github.tartaricacid.touhoulittlemaid.item.bauble;
 import com.github.tartaricacid.touhoulittlemaid.TouhouLittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.ILittleMaid;
 import com.github.tartaricacid.touhoulittlemaid.api.bauble.IMaidBauble;
-import com.github.tartaricacid.touhoulittlemaid.compat.kubejs.ModKubeJSCompat;
 import com.github.tartaricacid.touhoulittlemaid.init.InitItems;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -35,10 +34,11 @@ public final class BaubleManager {
         manager.bind(InitItems.MUTE_BAUBLE, new MuteBauble());
         manager.bind(Items.TOTEM_OF_UNDYING, new UndyingTotemBauble());
         manager.bind(InitItems.WIRELESS_IO, new WirelessIOBauble());
+
         for (ILittleMaid littleMaid : TouhouLittleMaid.EXTENSIONS) {
             littleMaid.bindMaidBauble(manager);
         }
-        ModKubeJSCompat.maidBaubleInit(manager);
+
         BAUBLES = ImmutableMap.copyOf(BAUBLES);
     }
 
@@ -49,13 +49,8 @@ public final class BaubleManager {
 
     @Nullable
     public static IMaidBauble getBauble(ItemStack stack) {
-        Item item = stack.getItem();
-        return getBauble(item);
+        return getBauble(stack.getItem());
     }
-
-/*    public void bind(DeferredHolder<Item, Item> item, IMaidBauble bauble) {
-        BAUBLES.put(item, bauble);
-    }*/
 
     public void bind(Item item, IMaidBauble bauble) {
         BAUBLES.put(item, bauble);
