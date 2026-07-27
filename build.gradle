@@ -369,10 +369,13 @@ publishing {
             from components.java
         }
     }
+}
 
-    repositories {
-        maven {
-            url "file:///D:/github_maven/Sh1roCu_MCRepo/repository"
+sourceSets {
+    main {
+        java {
+            exclude '**/compat/kubejs/**'
+            exclude '**/compat/slashblade/**'
         }
     }
 }
